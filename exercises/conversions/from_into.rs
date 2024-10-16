@@ -40,20 +40,35 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
 
 impl From<&str> for Person {
-    fn from(s: &str) -> Person {
+    fn from(s: &str) -> Self {
+        let mut split = s.split(',');
+        let (Some(name), Some(age), None) = (split.next(), split.next(), split.next()) else {
+            return Self::default();
+        };
+
+        if name.is_empty() {
+            return Self::default();
+        }
+
+        let Ok(age) = age.parse() else {
+            return Self::default();
+        };
+
+        Self {
+            name: name.into(),
+            age,
+        }
     }
 }
 
 fn main() {
-    // Use the `from` function
     let p1 = Person::from("Mark,20");
-    // Since From is implemented for Person, we should be able to use Into
+    println!("{p1:?}");
+
     let p2: Person = "Gerald,70".into();
-    println!("{:?}", p1);
-    println!("{:?}", p2);
+    println!("{p2:?}");
 }
 
 #[cfg(test)]
